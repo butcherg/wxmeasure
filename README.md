@@ -4,6 +4,9 @@ wxmeasure allows one to take measurements from a photograph where an object know
 an imperial foot is present.  The program is calibrated by measuring the object in calibration
 mode, then measurements can be taken in the photograph with measurement mode. 
 
+This code is offered for use under the terms and conditions of the MIT License.  See MIT.txt
+for specifics.
+
 ## Building
 
 wxmeasure uses the wxWidgets GUI library.  The library can be package-installed by your 
