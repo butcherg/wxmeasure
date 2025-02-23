@@ -3,6 +3,8 @@
 #include "measurepane.h"
 #include "myConfig.h"
 
+#include <wx/clipbrd.h>
+
 enum {
 	NOLINE,
 	CALIBRATE,
@@ -316,6 +318,10 @@ wxString feetinches(float m)
 			lastline = MEASURE;
 			pxmeasurement = distance(begin, end);
 			measurement = (float) pxmeasurement / (float) calibration;
+			if (wxTheClipboard->Open()) {
+				wxTheClipboard->SetData( new wxTextDataObject(feetinches(measurement)) );
+				wxTheClipboard->Close();
+			}
 		}
 		((wxFrame *)GetParent())->SetStatusText("");
 		calibrating = measuring = dragging = false;
