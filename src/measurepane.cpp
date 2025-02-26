@@ -284,26 +284,26 @@ wxString feetinches(float m)
 	void measurePane::mouseMoved(wxMouseEvent& event)
 	{
 		wxPoint p = event.GetPosition();
-		if (calibrating) {
+		
+		if (calibrating | measuring) {
 			end = getImageCoord(p);
+			if (event.ShiftDown()) {
+				if (abs(begin.x - end.x) > abs(begin.y - end.y)) 
+					end.y = begin.y;
+				else
+					end.x = begin.x;
+			}
 		}
-		else if (measuring) {
-			end = getImageCoord(p);
-		}
-		else {
-			if (dragging) {
+		else if (dragging) {
 				fit = false;
 				//pos = p;
 				imgx -= prevx - p.x;
 				imgy -= prevy - p.y;
-				Refresh();
-			}
-			setStatus(p);
-			prevx = p.x;
-			prevy = p.y;
-			
 		}
-		setStatus();
+		setStatus(p);
+		prevx = p.x;
+		prevy = p.y;
+		//setStatus();
 		Refresh();
 	}
 	
