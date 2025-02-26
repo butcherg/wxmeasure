@@ -43,7 +43,7 @@ struct pt {float x, y, r;};
 //#define POLYROUND
 #define TEXTCTRLHEIGHT 20
 
-const wxString WXMEASURE_VERSION = "0.1";
+const wxString WXMEASURE_VERSION = "0.1.1";
 
 /*
 wxArrayString split(wxString str, wxString delim)
