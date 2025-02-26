@@ -271,6 +271,7 @@ wxString feetinches(float m)
 				((wxFrame *)GetParent())->SetStatusText("measuring...");
 				lastline = NOLINE;
 			}
+			else wxMessageBox("Need to calibrate first.");
 		}
 		else {
 			((wxFrame *)GetParent())->SetStatusText("");
