@@ -294,6 +294,7 @@ wxString feetinches(float m)
 				else
 					end.x = begin.x;
 			}
+			calibration = distance(begin, end);
 		}
 		else if (dragging) {
 				fit = false;
