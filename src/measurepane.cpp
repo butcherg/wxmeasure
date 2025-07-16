@@ -39,6 +39,18 @@ wxString feetinches(float m)
 		return wxString::Format("%d' %02.2f\"", feet, 12*ftfrac);
 }
 
+wxString inches(float m)
+{
+	int feet = (int) m; //whole feet
+	float ftfrac = m - feet; //fraction of a foot
+	
+	float n = 12*ftfrac; //inches
+	int inches = (int) n; //whole inches
+	float infrac = n - inches; //fraction of an inch
+	
+	return wxString::Format("%0.02f\"", n+feet*12);
+}
+
 	measurePane::measurePane(wxWindow *parent, int id, wxPoint pos, wxSize size): wxPanel(parent, id, pos, size)
 	{
 		SetDoubleBuffered(true);
@@ -183,7 +195,7 @@ wxString feetinches(float m)
 			((wxFrame *) GetParent())->SetStatusText(wxString::Format("calibration: %d pixels", calibration),2);
 		
 		if (pxmeasurement > 0)
-			((wxFrame *) GetParent())->SetStatusText(wxString::Format("measurement: %s", feetinches(measurement)),0);
+			((wxFrame *) GetParent())->SetStatusText(wxString::Format("measurement: %s (%s)", feetinches(measurement),inches(measurement)),0);
 		
 		Refresh();
 			
@@ -211,12 +223,11 @@ wxString feetinches(float m)
 	}
 	
 	
-	
 	void measurePane::mouseLeftDClick(wxMouseEvent& event)
 	{
 		wxPoint p = event.GetPosition();
 		int ww, wh;
-		GetSize(&ww, &wh);
+		GetClientSize(&ww, &wh);
 		int iw = img.GetWidth();
 		int ih = img.GetHeight();
 		
@@ -228,15 +239,35 @@ wxString feetinches(float m)
 			if (iw > ih)
 				scale = (double) ww/ (double) iw;
 			else
-				scale = (double) wh/ (double) wh;
-			imgx = 0;
-			imgy = 0;
+				scale = (double) wh/ (double) ih;
+			if (iw < ww | ih < wh) {
+				imgx = ww/2-(iw*scale)/2;
+				imgy = wh/2-(ih*scale)/2;
+				//imgx = 0; imgy = 0;
+			}
+			else {
+				//imgx = ww/2-(iw*scale)/2;
+				//imgy = wh/2-(ih*scale)/2;
+				imgx = 0; imgy = 0;
+			}
 			fit = true;
 		}
 		else {
 			scale = 1.0;
-			imgx = -px + ww/2;
-			imgy = -py + wh/2;
+			if ((px < 0 | px > iw) | (py < 0 | py > ih)) { //out of image, so just center it
+				imgx = ww/2 - iw/2;
+				imgy = wh/2 - ih/2;
+			}
+			else { 
+				if (iw < ww | ih < wh) {
+					imgx = ww/2-(iw*scale)/2;
+					imgy = wh/2-(ih*scale)/2;
+				}
+				else {  // put mouse point at center
+					imgx = -px + ww/2;
+					imgy = -py + wh/2;
+				}
+			}
 			fit = false;
 		}
 		scaledimg = img.Scale(iw*scale, ih*scale);
@@ -294,7 +325,14 @@ wxString feetinches(float m)
 				else
 					end.x = begin.x;
 			}
-			calibration = distance(begin, end);
+			if (calibrating) {
+				calibration = distance(begin, end);
+			}
+			else if (measuring) {
+				pxmeasurement = distance(begin, end);
+				measurement = (float) pxmeasurement / (float) calibration;
+			}
+				
 		}
 		else if (dragging) {
 				fit = false;
