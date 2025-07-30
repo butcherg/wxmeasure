@@ -23,6 +23,7 @@ public:
 	void render(wxDC &dc);
 	void setImage(wxImage image);
 	void setImageFile(wxFileName f);
+	void setCalibration(long cal);
 	void refreshImage();
 	void OnTimer(wxTimerEvent& event);
 

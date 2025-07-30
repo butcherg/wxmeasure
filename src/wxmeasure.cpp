@@ -30,6 +30,7 @@
 #include <wx/cmdline.h>
 #include <wx/grid.h>
 #include <wx/aui/aui.h>
+#include <wx/numdlg.h> 
 #include <vector>
 #include <string>
 
@@ -90,7 +91,8 @@ enum {
 	Viewer_About = wxID_ABOUT,
 	Viewer_Open,
 	Viewer_LoadImage,
-	Viewer_Properties
+	Viewer_Properties,
+	Viewer_Calibration
 };
 
 class myFileDropTarget;
@@ -103,12 +105,16 @@ public:
 		wxMenu *fileMenu = new wxMenu;\
 		fileMenu->Append(Viewer_Open, "O&pen\tCtrl-O", "Open a point file");
 		fileMenu->Append(Viewer_Quit, "Q&uit\tCtrl-Q", "Quit wxmeasure");
+		
+		wxMenu *editMenu = new wxMenu;
+		editMenu->Append(Viewer_Calibration, "C&alibrate\tCtrl-A", "Manual calibration");
 
 		wxMenu *helpMenu = new wxMenu;
 		helpMenu->Append(Viewer_About, "&About\tF1", "Show about dialog");
 
 		wxMenuBar *menuBar = new wxMenuBar();
 		menuBar->Append(fileMenu, "&File");
+		menuBar->Append(editMenu, "&Edit");
 		menuBar->Append(helpMenu, "&Help");
 
 		SetMenuBar(menuBar);
@@ -171,6 +177,12 @@ public:
 	{
 		wxFileName f = wxFileSelector("Specify an image file:", file.GetPath(), "", "", wxFileSelectorDefaultWildcardStr, wxFD_OPEN);
 		OpenFile(f);
+	}
+	
+	void OnCalibrate(wxCommandEvent& WXUNUSED(event))
+	{
+		long cal = wxGetNumberFromUser	("Enter calibration in pixels","Ente a number","Calibration",0,0,10000);
+		if (cal > 0) image->setCalibration(cal);
 	}
 	
 	void OnProperties(wxCommandEvent& WXUNUSED(event))
@@ -284,6 +296,7 @@ wxBEGIN_EVENT_TABLE(MyFrame, wxFrame)
     EVT_MENU(Viewer_Quit,  MyFrame::OnQuit)
     EVT_MENU(Viewer_About, MyFrame::OnAbout)
     EVT_MENU(Viewer_Open, MyFrame::OnOpen)
+	EVT_MENU(Viewer_Calibration, MyFrame::OnCalibrate)
 	EVT_MENU(Viewer_Properties, MyFrame::OnProperties)
 wxEND_EVENT_TABLE()
 

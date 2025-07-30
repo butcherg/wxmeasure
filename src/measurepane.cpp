@@ -474,4 +474,10 @@ wxString inches(float m)
 			t.Start(500,wxTIMER_ONE_SHOT);
 			event.Skip();
 		}
+		
+	void measurePane::setCalibration(long cal)
+	{
+		calibration = cal;
+		setStatus();
+	}
 	
